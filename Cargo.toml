@@ -6,3 +6,21 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Impls of RSA
+rsa = "0.7.2"
+rsa-oaep-pss = "1.1.0"
+
+# rng
+rand = "0.8.5"
+
+# Hashing
+sha2 = "0.10.6"
+
+[dev-dependencies]
+# Benchmarking
+criterion = "0.4.0"
+
+[[bench]]
+name = "week1"
+harness = false
+
