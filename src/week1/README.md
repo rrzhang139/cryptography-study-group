@@ -17,10 +17,14 @@ sqrt(2^256) = 2^128
 
 ## General questions:
 
-1. Maybe this? https://www.rfc-editor.org/rfc/rfc8017
+### Suppose you read about RSA encryption and wanted to find it’s standard specification. Where would you look?
+
+Maybe this? https://www.rfc-editor.org/rfc/rfc8017
 NIST is likely also a good place.
 
-2. RSA
+### Find two libraries for each of RSA, TLS/SSL, and AEAD. Evaluate the maturity each library, and skim the code. What about the library structure makes sense? How is their documentation?
+
+RSA
 https://github.com/RustCrypto/RSA
 - Doesn't look that mature by looking at their road map (they have been audited though)
      - Also does not look that active
@@ -76,24 +80,25 @@ easy for users to consume. All types are defined in lib.rs.
 - Great docs, very detailed.
 
 
-### Benchmarking results:
+### Benchmark the speed of an algorithm in the two different implementations with Criterion.
+
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running benches/week1.rs (target/release/deps/week1-451d16280bbb9934)
 
      lib1 generate keys      time:   [182.96 ms 194.21 ms 205.67 ms]
-                             
+
 Found 1 outliers among 100 measurements (1.00%)
   1 (1.00%) high mild
 
      lib1 encrypt           time:   [192.29 µs 194.68 µs 197.27 µs]
-                           
+
 Found 15 outliers among 100 measurements (15.00%)
   7 (7.00%) high mild
   8 (8.00%) high severe
 
      lib1 decrypt            time:   [1.7214 ms 1.7464 ms 1.7726 ms]
-                            
+
 Found 9 outliers among 100 measurements (9.00%)
   9 (9.00%) high mild
 
@@ -109,3 +114,14 @@ Found 1 outliers among 100 measurements (1.00%)
 Found 12 outliers among 100 measurements (12.00%)
   8 (8.00%) high mild
   4 (4.00%) high severe
+
+
+### You’re implementing a Tweakable Encryption scheme. You need to know what standard API users will expect. Find a reference for the standard API and write the function signatures for encryption and decryption.
+See src/week1/mod.rs
+
+### You want to understand a paper on a new polynomial commitment scheme, but you’ve been trying for more than an hour, and the math is over your head. What do you do?
+First go for a walk and see if time is the solution. If that doesn't work I'd ask the unclock study group to see if anyone could help.
+
+### Implement Vigenere Cipher
+See src/week1/mod.rs
+
