@@ -1,4 +1,5 @@
 # Questions from Week 1
+Link to questions: https://hackmd.io/EU6tnzE2SmqIH-XC5E7JhA
 
 ## Ch 2:
 
@@ -73,3 +74,47 @@ widely used
 - Pretty simple structure, makes sense. They implement the standard API which as said makes it
 easy for users to consume. All types are defined in lib.rs.
 - Great docs, very detailed.
+
+
+### Benchmarking results:
+➜  cryptography-study-group git:(master) ✗ cargo bench
+   Compiling cryptography-study-group v0.1.0 (/Users/andrew/git/cryptography-study-group)
+    Finished bench [optimized] target(s) in 2.33s
+     Running unittests src/lib.rs (target/release/deps/cryptography_study_group-d67ffde45ee80e4c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/week1.rs (target/release/deps/week1-451d16280bbb9934)
+lib1 generate keys      time:   [182.96 ms 194.21 ms 205.67 ms]
+                        change: [-5.4442% +2.8181% +10.995%] (p = 0.50 > 0.05)
+                        No change in performance detected.
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+lib1 encrypt            time:   [192.29 µs 194.68 µs 197.27 µs]
+                        change: [-2.4870% -1.2140% +0.0993%] (p = 0.07 > 0.05)
+                        No change in performance detected.
+Found 15 outliers among 100 measurements (15.00%)
+  7 (7.00%) high mild
+  8 (8.00%) high severe
+
+lib1 decrypt            time:   [1.7214 ms 1.7464 ms 1.7726 ms]
+                        change: [+5.1250% +6.3624% +7.6269%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 9 outliers among 100 measurements (9.00%)
+  9 (9.00%) high mild
+
+lib 2 generate keys     time:   [211.66 ms 229.09 ms 246.93 ms]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+lib 2 encrypt           time:   [137.39 µs 139.83 µs 142.65 µs]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+lib 2 decrypt           time:   [9.7988 ms 9.8701 ms 9.9718 ms]
+Found 12 outliers among 100 measurements (12.00%)
+  8 (8.00%) high mild
+  4 (4.00%) high severe
