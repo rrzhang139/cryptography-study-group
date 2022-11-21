@@ -125,3 +125,13 @@ First go for a walk and see if time is the solution. If that doesn't work I'd as
 ### Implement Vigenere Cipher
 See src/week1/mod.rs
 
+### What is a side channel attack? Is your cipher implementation constant time?
+My cipher is not constant time, it is O(max(n, k)) where n is the length of the message and k is the length of the key.
+
+From wikipedia: "a side-channel attack is any attack based on extra information that can be gathered because of the
+fundamental way a computer protocol or algorithm is implemented, rather than flaws in the design of the protocol or algorithm itself"
+https://en.wikipedia.org/wiki/Side-channel_attack
+
+Reading more on the page, it appears that a way to mitigate timing attacks is to make it so your algorithm always runs for the same amount of time
+regardless of the input size. In the case of this cipher, I don't think a timing attack would really be necessary since frequency analysis is enough
+to break the cipher.
