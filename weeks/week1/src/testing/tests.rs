@@ -1,4 +1,4 @@
-use cryptography_study_group::week1::{vigenere_decrypt, vigenere_encrypt};
+use crate::{vigenere_decrypt, vigenere_encrypt};
 
 #[test]
 fn test_vigenere() {

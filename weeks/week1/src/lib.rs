@@ -1,6 +1,5 @@
-pub fn print_hello() {
-    println!("Hello World");
-}
+#[cfg(test)]
+pub mod testing;
 
 // Tweakable Encryption Standard:
 // I think this would be the standard: https://people.eecs.berkeley.edu/~daw/papers/tweak-crypto02.pdf
@@ -71,8 +70,8 @@ fn decode_u32(n: u32) -> char {
 
 #[cfg(test)]
 mod tests {
-    use crate::week1::decode_u32;
-    use crate::week1::encode_char;
+    use crate::decode_u32;
+    use crate::encode_char;
 
     #[test]
     fn test_encode_char() {
