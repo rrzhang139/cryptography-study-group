@@ -13,9 +13,9 @@ fn _decrypt(_key: Vec<u8>, _tweak: Vec<u8>, _ciphertext: Vec<u8>) -> Vec<u8> {
     return vec![];
 }
 
-/// Encrypts chosen `plaintext` with the chosen `key` using the Vigenere cipher. It is assumed that
+/// Encrypts chosen `plaintext` with the chosen `key` using the Vignere cipher. It is assumed that
 /// both of these inputs only contain letters from the alphabet.
-pub fn vigenere_encrypt(key: String, plaintext: String) -> String {
+pub fn vignere_encrypt(key: &str, plaintext: &str) -> String {
     let key = key.to_lowercase();
     let plaintext = plaintext.to_lowercase();
 
@@ -33,9 +33,9 @@ pub fn vigenere_encrypt(key: String, plaintext: String) -> String {
     return cipher_vec.into_iter().collect();
 }
 
-/// Decrypts chosen `ciphertext` with the chosen `key` using the Vigenere cipher. It is assumed that
+/// Decrypts chosen `ciphertext` with the chosen `key` using the Vignere cipher. It is assumed that
 /// both of these inputs only contain letters from the alphabet.
-pub fn vigenere_decrypt(key: String, ciphertext: String) -> String {
+pub fn vignere_decrypt(key: &str, ciphertext: &str) -> String {
     let key = key.to_lowercase();
     let ciphertext = ciphertext.to_lowercase();
 
