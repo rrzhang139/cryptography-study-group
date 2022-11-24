@@ -1,5 +1,5 @@
 # Questions from Week 1
-Link to questions: https://hackmd.io/EU6tnzE2SmqIH-XC5E7JhA
+Link to questions: https://uncloak.org/courses/rust+cryptography+engineering/course-2022-11-18+Session+1+Notes
 
 ## Ch 2:
 
