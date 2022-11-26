@@ -19,8 +19,7 @@ Cipher text looks like C1 | C2
 
 We have many pairs L|R and C1 | C2 that we know of.
 
-Then we can perform an exhaustive search over K1, while fixing K2 to some arbitrary value. This takes at most 2^48 iterations. We stop once we confirm that
-the found C1 makes the one we have for the given input.
+Then we can perform an exhaustive search over K1, while fixing K2 to some arbitrary value and encrypting the plaintext until C1' = C1. This takes at most 2^48 iterations.
 
 Now we just use the K1 we found and exhaustive search over K2. This takes at most 2^48 iterations. In total, this takes 2^49 iterations in the worst case.
 
@@ -31,5 +30,40 @@ case of n = 0, it won't be clear how many bytes were added since P || 0 is the s
 2. Since they are both encrypted with the same nonce, and we know one of the plaintexts, we can compute:
 
 C1 xor C2 = P1 xor K1 xor P2 xor K2 = P1 xor P2 xor E(K, nonce || i) xor E(I, nonce || j) TODO: Come back to this.
+
+6.
+
+P1, P2 -> C0, C1, C2
+
+P1' -> C0', C1'
+
+C1' = C2
+
+P1' = ...
+
+C0 = IV
+C1 = E(K, P1 xor C0)
+C2 = E(K, P2 xor C1)
+
+C0' = IV'
+C1' = E(K, C0' xor P1')
+
+C1' = C2 -> E(K, C0' xor P1') = E(K, P2 xor C1)
+
+P1' = D(K, C1') xor IV'
+->  = D(K, C2) xor IV'
+->  = D(K, E(K, P2 xor C1)) xor IV'
+->  = P2 xor C1 xor IV' since D(K, E(K, x)) = x
+->  = P2 xor C1 xor C0'
+-> attacker knows P1'
+
+
+
+
+
+
+
+
+
 
 
