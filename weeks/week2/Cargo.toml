@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 openssl = { version = "0.10", features = ["vendored"] }
+aes = "0.8.2"
+hex = "0.4.3"
+
