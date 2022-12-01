@@ -25,38 +25,33 @@ pub fn des_decrypt(key: &[u8], ciphertext: &[u8]) -> Result<Vec<u8>, ErrorStack>
 
 // https://datatracker.ietf.org/doc/html/rfc2315
 // Assume that the blocksize can't exceed 255 and assume that blocksize / 8 makes sense
-pub fn pkcs_padding(blocksize_num_bytes: u8, input: &mut Vec<u8>) {
-    let num_bytes = input.len();
-    let padding_num = blocksize_num_bytes - ((num_bytes % (blocksize_num_bytes as usize)) as u8);
-    let mut i = 0;
-    let mut padding: Vec<u8> = vec![];
-    while i < padding_num {
-        padding.push(padding_num);
-        i += 1;
-    }
-    input.append(&mut padding);
+pub fn pkcs_padding(blocksize: u8, input: &mut Vec<u8>) {
+    let padding_bytes: u8 = blocksize - (input.len() % blocksize as usize) as u8;
+
+    input.append(&mut [padding_bytes].repeat(padding_bytes.into()));
+
+    println!("{:?}", input);
 }
 
 pub fn verify_pkcs_padding(blocksize: u8, input: &[u8]) {
-    assert!(!input.is_empty(), "Input is empty");
+    assert!(!input.is_empty(), "Input cannot be empty");
     assert!(
         input.len() % (blocksize as usize) == 0,
-        "Input isn't a multiple of blocksize"
+        "Input isnt a multiple of blocksize"
     );
-    let last_byte: u8 = *input.last().unwrap();
+    let last_byte = *input.last().unwrap();
     assert!(blocksize >= last_byte);
+    assert!(last_byte >= 1);
     if last_byte == blocksize {
         assert!(input.len() > blocksize as usize);
     }
-    let ref slice = input[input.len() - last_byte as usize..];
-    for x in slice.iter() {
-        assert_eq!(x, &last_byte);
+    let slice = &input[input.len() - last_byte as usize..];
+    for byte in slice.iter() {
+        assert_eq!(*byte, last_byte);
     }
 
-    assert_eq!(
-        ((input.len() - last_byte as usize) % blocksize as usize) as u8,
-        blocksize - last_byte
-    );
+    let original_plaintext_len = input.len() as u8 - last_byte;
+    assert_eq!(original_plaintext_len % blocksize, blocksize - last_byte);
 }
 
 #[cfg(test)]
@@ -107,14 +102,18 @@ mod tests {
         let key = b"\x00\x00\x00\x00\x00\x00\x00\x01";
         let plaintext = b"\x00\x00\x00\x00\x00\x00\x00\x01";
 
-        let ciphertext: Vec<u8> = des_encrypt(key, plaintext).unwrap();
+        let ciphertext = des_encrypt(key, plaintext).unwrap();
+        let complement_ciphertext: Vec<u8> = ciphertext.iter().map(|byte| !byte).collect();
 
-        println!("{:?}", ciphertext);
+        let complement_key = key.map(|byte| !byte);
+        let complement_plaintext = plaintext.map(|byte| !byte);
+        let ciphertext_key_and_plaintext_complement =
+            des_encrypt(&complement_key, &complement_plaintext).unwrap();
 
-        let inv_key = key.map(|b| !b);
-        let inv_pt = plaintext.map(|b| !b);
-        let inv_ct: Vec<u8> = ciphertext.iter().map(|b| !b).collect();
-        assert_eq!(des_encrypt(&inv_key, &inv_pt).unwrap(), inv_ct);
+        assert_eq!(
+            ciphertext_key_and_plaintext_complement,
+            complement_ciphertext
+        );
     }
 
     use std::iter::zip;
@@ -128,22 +127,22 @@ mod tests {
         let key = b"\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01";
         let iv = b"\x87\xF3\x48\xFF\x79\xB8\x11\xAF\x38\x57\xD6\x71\x8E\x5F\x0F\x91";
 
-        let c_0 = iv;
-        let c_1 = b"\x7C\x3D\x26\xF7\x73\x77\x63\x5A\x5E\x43\xE9\xB5\xCC\x5D\x05\x92";
-        let c_2 = b"\x6E\x26\xFF\xC5\x22\x0D\xC7\xD4\x05\xF1\x70\x86\x70\xE6\xE0\x17";
+        let ciphertext_1 = b"\x7C\x3D\x26\xF7\x73\x77\x63\x5A\x5E\x43\xE9\xB5\xCC\x5D\x05\x92";
+        let ciphertext_2 = b"\x6E\x26\xFF\xC5\x22\x0D\xC7\xD4\x05\xF1\x70\x86\x70\xE6\xE0\x17";
 
-        let aes = Aes256::new(key.into());
-        let mut block_c1: GenericArray<u8, U16> = GenericArray::clone_from_slice(c_1);
-        let mut block_c2: GenericArray<u8, U16> = GenericArray::clone_from_slice(c_2);
+        let mut cipher_block1 = GenericArray::clone_from_slice(ciphertext_1);
+        let mut cipher_block2 = GenericArray::clone_from_slice(ciphertext_2);
 
-        aes.decrypt_block(&mut block_c1);
-        aes.decrypt_block(&mut block_c2);
+        // Initialize cipher
+        let cipher = Aes256::new(key.into());
 
-        let p_1 = xor(hex::encode(block_c1).as_bytes(), c_0);
-        let p_2 = xor(hex::encode(block_c2).as_bytes(), c_1);
+        cipher.decrypt_block(&mut cipher_block1);
+        cipher.decrypt_block(&mut cipher_block2);
 
-        println!("p_1: {:?}", p_1);
-        println!("p_2: {:?}", p_2);
+        let plaintext1 = xor(&cipher_block1, iv);
+        let plaintext2 = xor(&cipher_block2, &cipher_block1);
+
+        println!("{:?} {:?}", plaintext1, plaintext2);
     }
 
     use crate::pkcs_padding;
